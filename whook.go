@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"strings"
 
 	"github.com/tidusant/c3m-common/c3mcommon"
 	"github.com/tidusant/c3m-common/log"
@@ -37,7 +38,7 @@ func main() {
 		//logLevel = log.InfoLevel
 		gin.SetMode(gin.ReleaseMode)
 	}
-	log.Debugf("encode %s, action: %s", mycrypto.Encode2("ghtk"), mycrypto.Encode2("updateorderstatus"))
+	log.Debugf("encode %s", mycrypto.Encode2("uo,ghtk,59a275355f4aec1b026b6f5e"))
 
 	// log.SetOutputFile(fmt.Sprintf("portal-"+strconv.Itoa(port)), logLevel)
 	// defer log.CloseOutputFile()
@@ -49,7 +50,7 @@ func main() {
 
 	router := gin.Default()
 
-	router.POST("/:name/:action/:partner", func(c *gin.Context) {
+	router.POST("/:name/:encode", func(c *gin.Context) {
 		strrt := ""
 		if c.Param("name") == mytoken {
 			requestDomain := c.Request.Header.Get("Origin")
@@ -87,9 +88,13 @@ func main() {
 }
 
 func myRoute(c *gin.Context, rpcname string) string {
-	action := mycrypto.Decode2(c.Param("action"))
-	partner := mycrypto.Decode2(c.Param("partner"))
-	if partner == "" || action == "" {
+	encode := mycrypto.Decode2(c.Param("encode"))
+
+	if encode == "" {
+		return ""
+	}
+	sdata := strings.Split(encode, ",")
+	if len(sdata) < 3 {
 		return ""
 	}
 	//data := c.PostForm("label_id")
@@ -118,11 +123,12 @@ func myRoute(c *gin.Context, rpcname string) string {
 	strrt := string(info)
 	//save into db
 	var whook models.Whook
-	whook.Name = partner
-	whook.Action = action
+	whook.Name = sdata[1]
+	whook.Action = sdata[0]
 	whook.Data = strrt
+	whook.ShopID = sdata[2]
 	whook.Status = 0
 	rpsex.SaveWhook(whook)
-	log.Debugf("action %s, partner %s, data %v", action, partner, strrt)
+	log.Debugf("action %s, partner %s, data %v", sdata[0], sdata[1], sdata[2])
 	return ""
 }
