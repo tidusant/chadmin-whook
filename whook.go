@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"fmt"
 	"strings"
 
 	"github.com/tidusant/c3m-common/c3mcommon"
@@ -33,16 +34,16 @@ func main() {
 	flag.StringVar(&mytoken, "mytoken", "xHrldoad34KDOSkkm", "mytoken")
 	flag.Parse()
 
-	//logLevel := log.DebugLevel
+	logLevel := log.DebugLevel
 	if !debug {
-		//logLevel = log.InfoLevel
+		logLevel = log.InfoLevel
 		gin.SetMode(gin.ReleaseMode)
 	}
-	log.Debugf("encode %s", mycrypto.Encode2("uo,ghtk,59a275355f4aec1b026b6f5e"))
+	log.Debugf("encode %s", mycrypto.Encode2("uo,ghtk,5a52f89a7b4b30ed5ecfce9d"))
 
-	// log.SetOutputFile(fmt.Sprintf("portal-"+strconv.Itoa(port)), logLevel)
-	// defer log.CloseOutputFile()
-	// log.RedirectStdOut()
+	log.SetOutputFile(fmt.Sprintf("portal-"+strconv.Itoa(port)), logLevel)
+	defer log.CloseOutputFile()
+	log.RedirectStdOut()
 
 	log.Infof("running with port:" + strconv.Itoa(port))
 
