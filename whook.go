@@ -54,27 +54,27 @@ func main() {
 	router.POST("/:name/:encode", func(c *gin.Context) {
 		strrt := ""
 		if c.Param("name") == mytoken {
-			requestDomain := c.Request.Header.Get("Origin")
-			if requestDomain == "" {
-				requestDomain = "http://" + c.Request.Host
-			}
-
-			allowDomain := c3mcommon.CheckDomain(requestDomain)
-
 			c.Header("Access-Control-Allow-Origin", "*")
-			if allowDomain != "" {
-				c.Header("Access-Control-Allow-Origin", allowDomain)
-				c.Header("Access-Control-Allow-Headers", "access-control-allow-origin, access-control-allow-headers,access-control-allow-credentials")
-				c.Header("Access-Control-Allow-Credentials", "true")
-				log.Debugf("check request:%s", c.Request.URL.Path)
-				if rpsex.CheckRequest(c.Request.URL.Path, c.Request.UserAgent(), c.Request.Referer(), c.Request.RemoteAddr, "POST") {
-					strrt = myRoute(c, "")
-				} else {
-					log.Debugf("check request error")
-				}
+			// requestDomain := c.Request.Header.Get("Origin")
+			// if requestDomain == "" {
+			// 	requestDomain = "http://" + c.Request.Host
+			// }
+
+			// allowDomain := c3mcommon.CheckDomain(requestDomain)
+
+			//if allowDomain != "" {
+			//c.Header("Access-Control-Allow-Origin", allowDomain)
+			c.Header("Access-Control-Allow-Headers", "access-control-allow-origin, access-control-allow-headers,access-control-allow-credentials")
+			c.Header("Access-Control-Allow-Credentials", "true")
+			log.Debugf("check request:%s", c.Request.URL.Path)
+			if rpsex.CheckRequest(c.Request.URL.Path, c.Request.UserAgent(), c.Request.Referer(), c.Request.RemoteAddr, "POST") {
+				strrt = myRoute(c, "")
 			} else {
-				log.Debugf("Not allow " + requestDomain)
+				log.Debugf("check request error")
 			}
+			// } else {
+			// 	log.Debugf("Not allow " + requestDomain)
+			// }
 
 		}
 		if strrt == "" {
